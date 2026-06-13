@@ -326,10 +326,10 @@
 
   <!-- Interface principale -->
   <div id="mainScreen">
-    <h1>Signal de vie</h1>
+    <h1>Elynn Health Monitoring System</h1>
 
     <button class="btn btn-ok" id="btnOk" onclick="toggleMood()">
-      🟢 Je suis vivante
+      🟢 Elynn est vivante
     </button>
 
     <div id="moodPanel">
@@ -437,7 +437,7 @@
       const em = moodEmoji.textContent;
       const desc = v > 0.2 ? "bonne journée" : v < -0.2 ? "journée difficile" : "journée neutre";
       moodPanel.classList.remove("open");
-      await ntfy(TOPIC_OK, "✅ Je suis vivante", "default", "white_check_mark",
+      await ntfy(TOPIC_OK, "Elynn est vivante", "default", "white_check_mark",
         `Tout va bien — ${now()}\nHumeur : ${em} ${v.toFixed(3)} (${desc})`);
     }
 
@@ -447,8 +447,8 @@
       moodPanel.classList.remove("open");
       document.getElementById("btnOk").disabled = true;
       document.getElementById("btnSos").disabled = true;
-      const ok = await ntfy(TOPIC_SOS, "🆘 SOS — BESOIN D'AIDE", "urgent", "rotating_light",
-        "⚠️ URGENT — SOS envoyé à " + now());
+      const ok = await ntfy(TOPIC_SOS, "SOS — BESOIN D'AIDE", "urgent", "rotating_light",
+        "URGENT — SOS envoyé à " + now());
       if (ok) sosPanel.classList.add("open");
       document.getElementById("btnOk").disabled = false;
       document.getElementById("btnSos").disabled = false;
@@ -468,8 +468,8 @@
           const lat = pos.coords.latitude.toFixed(5);
           const lon = pos.coords.longitude.toFixed(5);
           const acc = Math.round(pos.coords.accuracy);
-          await ntfy(TOPIC_SOS, "📍 Position GPS", "urgent", "round_pushpin",
-            `📍 Position — ${now()}\nLat: ${lat} / Lon: ${lon} (±${acc}m)\nhttps://maps.google.com/?q=${lat},${lon}`);
+          await ntfy(TOPIC_SOS, "Position GPS", "urgent", "round_pushpin",
+            `Position — ${now()}\nLat: ${lat} / Lon: ${lon} (±${acc}m)\nhttps://maps.google.com/?q=${lat},${lon}`);
         },
         err => { setStatus("✗ Position refusée ou indisponible", "err"); tsEl.textContent = err.message; },
         { timeout: 15000, enableHighAccuracy: true }
@@ -479,8 +479,8 @@
     async function sendContext() {
       const txt = document.getElementById("ctxInput").value.trim();
       if (!txt) { setStatus("✗ Message vide", "err"); return; }
-      await ntfy(TOPIC_SOS, "✏️ Contexte SOS", "urgent", "writing_hand",
-        `✏️ Contexte — ${now()}\n${txt}`);
+      await ntfy(TOPIC_SOS, "Contexte SOS", "urgent", "writing_hand",
+        `Contexte — ${now()}\n${txt}`);
       document.getElementById("ctxInput").value = "";
       document.getElementById("ctxWrap").classList.remove("open");
     }
