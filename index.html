@@ -112,7 +112,6 @@
       color: #fff
     }
 
-    /* ── Mood panel (Je suis vivante) ── */
     #moodPanel {
       display: none;
       flex-direction: column;
@@ -152,7 +151,6 @@
 
     input[type=range] {
       width: 100%;
-      accent-color: #3fb950;
       height: 6px;
       -webkit-appearance: none;
       appearance: none;
@@ -185,7 +183,6 @@
       line-height: 1
     }
 
-    /* ── SOS panel ── */
     #sosPanel {
       display: none;
       flex-direction: column;
@@ -251,7 +248,46 @@
       border-color: #388bfd
     }
 
-    /* ── Status ── */
+    /* Écran de configuration */
+    #setupScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      max-width: 320px;
+      text-align: center
+    }
+
+    #setupScreen p {
+      font-size: .85rem;
+      color: #7d8590;
+      line-height: 1.5
+    }
+
+    #setupScreen code {
+      display: block;
+      font-size: .7rem;
+      color: #484f58;
+      word-break: break-all;
+      padding: .5rem;
+      background: #161b22;
+      border-radius: .5rem;
+      margin-top: .5rem
+    }
+
+    #mainScreen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      width: 100%
+    }
+
+    #mainScreen.ready {
+      display: flex
+    }
+
     #status {
       font-size: .85rem;
       color: #7d8590;
@@ -279,65 +315,89 @@
 
 <body>
 
-  <h1>Signal de vie</h1>
+  <!-- Écran affiché si pas de topics dans l'URL -->
+  <div id="setupScreen">
+    <h1>Signal de vie</h1>
+    <p>Cette page nécessite une URL configurée.<br>
+      Le lien que vous avez reçu doit contenir vos identifiants de notification.</p>
+    <p style="color:#f85149;font-size:.8rem">Si vous avez reçu un lien direct, vérifiez qu'il est complet.</p>
+    <code id="urlExample"></code>
+  </div>
 
-  <!-- ── Bouton principal OK ── -->
-  <button class="btn btn-ok" id="btnOk" onclick="toggleMood()">
-    🟢 Je suis vivante
-  </button>
+  <!-- Interface principale -->
+  <div id="mainScreen">
+    <h1>Signal de vie</h1>
 
-  <!-- ── Panneau humeur ── -->
-  <div id="moodPanel">
-    <div class="mood-label">Comment s'est passée ta journée ?</div>
-    <div class="mood-emoji" id="moodEmoji">😐</div>
-    <div class="mood-val" id="moodVal">0.00</div>
-    <div class="slider-wrap">
-      <input type="range" id="moodSlider" min="-1.5708" max="1.5708" step="0.001" value="0"
-        oninput="updateMood(this.value)">
-      <div class="mood-axis"><span>−π/2</span><span>0</span><span>+π/2</span></div>
-    </div>
-    <button class="btn btn-ok" style="padding:.9rem 2rem;font-size:1rem" onclick="sendOk()">
-      ✓ Envoyer
+    <button class="btn btn-ok" id="btnOk" onclick="toggleMood()">
+      🟢 Je suis vivante
     </button>
-  </div>
 
-  <!-- ── Bouton SOS ── -->
-  <button class="btn btn-sos" id="btnSos" onclick="triggerSOS()">
-    🆘 SOS
-  </button>
-
-  <!-- ── Panneau SOS post-envoi ── -->
-  <div id="sosPanel">
-    <div class="sos-sent">⚠️ Alerte envoyée</div>
-    <div class="sos-hint">Options supplémentaires :</div>
-    <div class="sos-actions">
-      <button class="btn-sm btn-loc" onclick="sendLocation()">📍 Ma position</button>
-      <button class="btn-sm btn-txt" id="btnCtx" onclick="toggleCtx()">✏️ Contexte</button>
+    <div id="moodPanel">
+      <div class="mood-label">Comment s'est passée ta journée ?</div>
+      <div class="mood-emoji" id="moodEmoji">😐</div>
+      <div class="mood-val" id="moodVal">0.00</div>
+      <div class="slider-wrap">
+        <input type="range" id="moodSlider" min="-1.5708" max="1.5708" step="0.001" value="0"
+          oninput="updateMood(this.value)">
+        <div class="mood-axis"><span>−π/2</span><span>0</span><span>+π/2</span></div>
+      </div>
+      <button class="btn btn-ok" style="padding:.9rem 2rem;font-size:1rem" onclick="sendOk()">
+        ✓ Envoyer
+      </button>
     </div>
-    <div id="ctxWrap">
-      <textarea id="ctxInput" rows="3" placeholder="Décris la situation…" maxlength="500"></textarea>
-      <button class="btn-sm btn-send" style="align-self:flex-end" onclick="sendContext()">Envoyer ↑</button>
-    </div>
-  </div>
 
-  <div id="status">En attente…</div>
-  <div class="ts" id="ts"></div>
+    <button class="btn btn-sos" id="btnSos" onclick="triggerSOS()">
+      🆘 SOS
+    </button>
+
+    <div id="sosPanel">
+      <div class="sos-sent">⚠️ Alerte envoyée</div>
+      <div class="sos-hint">Options supplémentaires :</div>
+      <div class="sos-actions">
+        <button class="btn-sm btn-loc" onclick="sendLocation()">📍 Ma position</button>
+        <button class="btn-sm btn-txt" onclick="toggleCtx()">✏️ Contexte</button>
+      </div>
+      <div id="ctxWrap">
+        <textarea id="ctxInput" rows="3" placeholder="Décris la situation…" maxlength="500"></textarea>
+        <button class="btn-sm btn-send" style="align-self:flex-end" onclick="sendContext()">Envoyer ↑</button>
+      </div>
+    </div>
+
+    <div id="status">En attente…</div>
+    <div class="ts" id="ts"></div>
+  </div>
 
   <script>
-    // ── Configuration ──────────────────────────────────────────────
-    const TOPIC_OK = "elynn-est-vivante-5kgip4mhrlujc";
-    const TOPIC_SOS = "elynn-sos-5kgip4mhrlujc";
+    // ── Lecture des topics depuis le hash de l'URL ─────────────────
+    // Format : https://vous.github.io/alerte/#topic-ok:topic-sos
+    // Le hash n'est jamais envoyé au serveur, jamais indexé.
     const SERVER = "https://ntfy.sh";
-    // ──────────────────────────────────────────────────────────────
 
+    let TOPIC_OK = null;
+    let TOPIC_SOS = null;
+
+    function parseHash() {
+      const h = location.hash.replace(/^#/, "");
+      if (!h) return false;
+      const parts = h.split(":");
+      if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
+      TOPIC_OK = parts[0];
+      TOPIC_SOS = parts[1];
+      return true;
+    }
+
+    if (parseHash()) {
+      document.getElementById("mainScreen").classList.add("ready");
+    } else {
+      document.getElementById("setupScreen").style.display = "flex";
+      document.getElementById("urlExample").textContent =
+        "Format attendu :\n" + location.origin + location.pathname + "#topic-ok:topic-sos";
+    }
+
+    // ── Utilitaires ───────────────────────────────────────────────
     const EMOJIS = [
-      [-1.5708, -1.2, "😭"],
-      [-1.2, -0.7, "😢"],
-      [-0.7, -0.2, "😟"],
-      [-0.2, 0.2, "😐"],
-      [0.2, 0.7, "🙂"],
-      [0.7, 1.2, "😊"],
-      [1.2, 1.5708, "😄"]
+      [-1.5708, -1.2, "😭"], [-1.2, -0.7, "😢"], [-0.7, -0.2, "😟"],
+      [-0.2, 0.2, "😐"], [0.2, 0.7, "🙂"], [0.7, 1.2, "😊"], [1.2, 1.5708, "😄"]
     ];
 
     const statusEl = document.getElementById("status");
@@ -350,9 +410,8 @@
     function setStatus(msg, cls) {
       statusEl.textContent = msg;
       statusEl.className = cls || "";
-      if (cls === "ok" || cls === "err") {
+      if (cls === "ok" || cls === "err")
         setTimeout(() => { statusEl.textContent = "En attente…"; statusEl.className = ""; tsEl.textContent = ""; }, 10000);
-      }
     }
 
     function now() {
@@ -368,42 +427,31 @@
     function updateMood(v) {
       v = parseFloat(v);
       moodValEl.textContent = v.toFixed(2);
-      for (const [lo, hi, em] of EMOJIS) {
-        if (v >= lo && v < hi) { moodEmoji.textContent = em; break; }
-      }
-      // edge: max value
-      if (v >= 1.5708) moodEmoji.textContent = "😄";
+      for (const [lo, hi, em] of EMOJIS)
+        if (v >= lo && v < hi) { moodEmoji.textContent = em; return; }
+      moodEmoji.textContent = "😄";
     }
 
     async function sendOk() {
       const v = parseFloat(document.getElementById("moodSlider").value);
       const em = moodEmoji.textContent;
       const desc = v > 0.2 ? "bonne journée" : v < -0.2 ? "journée difficile" : "journée neutre";
-      const msg = `Tout va bien — ${now()}\nHumeur du jour : ${em} ${v.toFixed(3)} (${desc})`;
-
-      setStatus("Envoi en cours…");
       moodPanel.classList.remove("open");
-
-      await ntfy(TOPIC_OK, "✅ Je suis vivante", "default", "white_check_mark", msg);
+      await ntfy(TOPIC_OK, "✅ Je suis vivante", "default", "white_check_mark",
+        `Tout va bien — ${now()}\nHumeur : ${em} ${v.toFixed(3)} (${desc})`);
     }
 
     // ── SOS ───────────────────────────────────────────────────────
     async function triggerSOS() {
       if (!confirm("⚠️ Envoyer un SOS ?\n\nCela alertera immédiatement votre contact.")) return;
-
       moodPanel.classList.remove("open");
       document.getElementById("btnOk").disabled = true;
       document.getElementById("btnSos").disabled = true;
-
-      setStatus("Envoi SOS…");
       const ok = await ntfy(TOPIC_SOS, "🆘 SOS — BESOIN D'AIDE", "urgent", "rotating_light",
         "⚠️ URGENT — SOS envoyé à " + now());
-
-      if (ok) {
-        sosPanel.classList.add("open");
-      }
-      document.getElementById("btnSos").disabled = false;
+      if (ok) sosPanel.classList.add("open");
       document.getElementById("btnOk").disabled = false;
+      document.getElementById("btnSos").disabled = false;
     }
 
     function toggleCtx() {
@@ -413,23 +461,17 @@
     }
 
     async function sendLocation() {
-      if (!navigator.geolocation) {
-        setStatus("✗ Géolocalisation non disponible", "err"); return;
-      }
+      if (!navigator.geolocation) { setStatus("✗ Géolocalisation non disponible", "err"); return; }
       setStatus("Localisation en cours…");
       navigator.geolocation.getCurrentPosition(
         async pos => {
           const lat = pos.coords.latitude.toFixed(5);
           const lon = pos.coords.longitude.toFixed(5);
           const acc = Math.round(pos.coords.accuracy);
-          const maps = `https://maps.google.com/?q=${lat},${lon}`;
-          const msg = `📍 Position GPS — ${now()}\nLat: ${lat} / Lon: ${lon} (±${acc}m)\n${maps}`;
-          await ntfy(TOPIC_SOS, "📍 Position GPS", "urgent", "round_pushpin", msg);
+          await ntfy(TOPIC_SOS, "📍 Position GPS", "urgent", "round_pushpin",
+            `📍 Position — ${now()}\nLat: ${lat} / Lon: ${lon} (±${acc}m)\nhttps://maps.google.com/?q=${lat},${lon}`);
         },
-        err => {
-          setStatus("✗ Position refusée ou indisponible", "err");
-          tsEl.textContent = err.message;
-        },
+        err => { setStatus("✗ Position refusée ou indisponible", "err"); tsEl.textContent = err.message; },
         { timeout: 15000, enableHighAccuracy: true }
       );
     }
@@ -437,25 +479,23 @@
     async function sendContext() {
       const txt = document.getElementById("ctxInput").value.trim();
       if (!txt) { setStatus("✗ Message vide", "err"); return; }
-      const msg = `✏️ Contexte SOS — ${now()}\n${txt}`;
-      await ntfy(TOPIC_SOS, "✏️ Contexte SOS", "urgent", "writing_hand", msg);
+      await ntfy(TOPIC_SOS, "✏️ Contexte SOS", "urgent", "writing_hand",
+        `✏️ Contexte — ${now()}\n${txt}`);
       document.getElementById("ctxInput").value = "";
       document.getElementById("ctxWrap").classList.remove("open");
     }
 
     // ── Transport ntfy ────────────────────────────────────────────
     async function ntfy(topic, title, priority, tags, body) {
+      setStatus("Envoi en cours…");
       try {
-        const r = await fetch(SERVER + "/" + topic, {
+        const r = await fetch(`${SERVER}/${topic}`, {
           method: "POST",
           headers: { "Title": title, "Priority": priority, "Tags": tags },
-          body,
-          mode: "cors",
-          credentials: "omit"
+          body, mode: "cors", credentials: "omit"
         });
         if (!r.ok) throw new Error("HTTP " + r.status);
         setStatus("✓ Envoyé (" + now() + ")", "ok");
-        tsEl.textContent = SERVER + "/" + topic;
         return true;
       } catch (e) {
         setStatus("✗ Échec — vérifiez la connexion", "err");
@@ -466,9 +506,7 @@
 
     // ── Init ──────────────────────────────────────────────────────
     updateMood(0);
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js").catch(() => { });
-    }
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => { });
   </script>
 </body>
 
