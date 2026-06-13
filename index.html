@@ -315,9 +315,10 @@
 
 <body>
 
+  <h2>Elynn Health Monitoring System</h2>
+
   <!-- Écran affiché si pas de topics dans l'URL -->
   <div id="setupScreen">
-    <h1>Signal de vie</h1>
     <p>Cette page nécessite une URL configurée.<br>
       Le lien que vous avez reçu doit contenir vos identifiants de notification.</p>
     <p style="color:#f85149;font-size:.8rem">Si vous avez reçu un lien direct, vérifiez qu'il est complet.</p>
@@ -326,10 +327,11 @@
 
   <!-- Interface principale -->
   <div id="mainScreen">
-    <h1>Elynn Health Monitoring System</h1>
+
+    <h1>Bonjour Elynn</h1>
 
     <button class="btn btn-ok" id="btnOk" onclick="toggleMood()">
-      🟢 Elynn est vivante
+      Je suis vivante
     </button>
 
     <div id="moodPanel">
@@ -347,7 +349,7 @@
     </div>
 
     <button class="btn btn-sos" id="btnSos" onclick="triggerSOS()">
-      🆘 SOS
+      SOS
     </button>
 
     <div id="sosPanel">
@@ -369,10 +371,7 @@
 
   <script>
     // ── Lecture des topics depuis le hash de l'URL ─────────────────
-    // Format : https://vous.github.io/alerte/#topic-ok:topic-sos
-    // Le hash n'est jamais envoyé au serveur, jamais indexé.
     const SERVER = "https://ntfy.sh";
-
     let TOPIC_OK = null;
     let TOPIC_SOS = null;
 
@@ -388,6 +387,7 @@
 
     if (parseHash()) {
       document.getElementById("mainScreen").classList.add("ready");
+      document.getElementById("setupScreen").style.display = "none";
     } else {
       document.getElementById("setupScreen").style.display = "flex";
       document.getElementById("urlExample").textContent =
@@ -435,20 +435,20 @@
     async function sendOk() {
       const v = parseFloat(document.getElementById("moodSlider").value);
       const em = moodEmoji.textContent;
-      const desc = v > 0.2 ? "bonne journée" : v < -0.2 ? "journée difficile" : "journée neutre";
+      const desc = v > 0.2 ? "bonne journée" : v < -0.2 ? "mauvaise journée" : "journée neutre";
       moodPanel.classList.remove("open");
       await ntfy(TOPIC_OK, "Elynn est vivante", "default", "white_check_mark",
-        `Tout va bien — ${now()}\nHumeur : ${em} ${v.toFixed(3)} (${desc})`);
+        `Tout va bien - ${now()}\nHumeur : ${em} ${v.toFixed(3)} (${desc})`);
     }
 
     // ── SOS ───────────────────────────────────────────────────────
     async function triggerSOS() {
-      if (!confirm("⚠️ Envoyer un SOS ?\n\nCela alertera immédiatement votre contact.")) return;
+      if (!confirm("⚠️ Envoyer un SOS ?\n\nCela alertera immédiatement Hedi qui appelera Interpol pour te retrouver.")) return;
       moodPanel.classList.remove("open");
       document.getElementById("btnOk").disabled = true;
       document.getElementById("btnSos").disabled = true;
-      const ok = await ntfy(TOPIC_SOS, "SOS — BESOIN D'AIDE", "urgent", "rotating_light",
-        "URGENT — SOS envoyé à " + now());
+      const ok = await ntfy(TOPIC_SOS, "SOS - BESOIN D'AIDE", "urgent", "rotating_light",
+        "URGENT - SOS envoyé à " + now());
       if (ok) sosPanel.classList.add("open");
       document.getElementById("btnOk").disabled = false;
       document.getElementById("btnSos").disabled = false;
@@ -469,7 +469,7 @@
           const lon = pos.coords.longitude.toFixed(5);
           const acc = Math.round(pos.coords.accuracy);
           await ntfy(TOPIC_SOS, "Position GPS", "urgent", "round_pushpin",
-            `Position — ${now()}\nLat: ${lat} / Lon: ${lon} (±${acc}m)\nhttps://maps.google.com/?q=${lat},${lon}`);
+            `Position - ${now()}\nLat: ${lat} / Lon: ${lon} (±${acc}m)\nhttps://maps.google.com/?q=${lat},${lon}`);
         },
         err => { setStatus("✗ Position refusée ou indisponible", "err"); tsEl.textContent = err.message; },
         { timeout: 15000, enableHighAccuracy: true }
@@ -480,7 +480,7 @@
       const txt = document.getElementById("ctxInput").value.trim();
       if (!txt) { setStatus("✗ Message vide", "err"); return; }
       await ntfy(TOPIC_SOS, "Contexte SOS", "urgent", "writing_hand",
-        `Contexte — ${now()}\n${txt}`);
+        `Contexte - ${now()}\n${txt}`);
       document.getElementById("ctxInput").value = "";
       document.getElementById("ctxWrap").classList.remove("open");
     }
@@ -498,7 +498,7 @@
         setStatus("✓ Envoyé (" + now() + ")", "ok");
         return true;
       } catch (e) {
-        setStatus("✗ Échec — vérifiez la connexion", "err");
+        setStatus("✗ Échec - vérifiez la connexion", "err");
         tsEl.textContent = "Erreur : " + e.message;
         return false;
       }
