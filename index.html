@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>Elynn Health Monitoring System</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: system-ui, sans-serif;
+      background: #0d1117;
+      color: #e6edf3
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      gap: 1.5rem;
+      min-height: 100vh
+    }
+
+    h1 {
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: #7d8590;
+      text-align: center;
+      letter-spacing: .05em;
+      text-transform: uppercase
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      max-width: 320px;
+      padding: 1.4rem 2rem;
+      border: none;
+      border-radius: 1rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none
+    }
+
+    .btn:active {
+      transform: scale(.97);
+      opacity: .85
+    }
+
+    .btn:disabled {
+      opacity: .4;
+      cursor: default
+    }
+
+    .btn-ok {
+      background: #1a7f37;
+      color: #fff
+    }
+
+    .btn-sos {
+      background: #da3633;
+      color: #fff;
+      font-size: 1.5rem;
+      letter-spacing: .08em
+    }
+
+    .btn-sm {
+      display: inline-block;
+      width: auto;
+      padding: .75rem 1.2rem;
+      font-size: 1rem;
+      border-radius: .75rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      transition: opacity .15s, transform .1s
+    }
+
+    .btn-sm:active {
+      transform: scale(.97);
+      opacity: .8
+    }
+
+    .btn-loc {
+      background: #1f6feb;
+      color: #fff
+    }
+
+    .btn-txt {
+      background: #6e40c9;
+      color: #fff
+    }
+
+    .btn-send {
+      background: #388bfd;
+      color: #fff
+    }
+
+    /* ── Mood panel (Je suis vivante) ── */
+    #moodPanel {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      max-width: 320px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 1rem;
+      padding: 1.25rem
+    }
+
+    #moodPanel.open {
+      display: flex
+    }
+
+    .mood-label {
+      font-size: .85rem;
+      color: #7d8590;
+      text-align: center
+    }
+
+    .mood-val {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e6edf3;
+      min-width: 4rem;
+      text-align: center;
+      font-family: monospace
+    }
+
+    .slider-wrap {
+      width: 100%;
+      position: relative
+    }
+
+    input[type=range] {
+      width: 100%;
+      accent-color: #3fb950;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: linear-gradient(to right, #da3633 0%, #e3b341 50%, #3fb950 100%);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #e6edf3;
+      border: 2px solid #30363d;
+      cursor: pointer
+    }
+
+    .mood-axis {
+      display: flex;
+      justify-content: space-between;
+      font-size: .65rem;
+      color: #484f58;
+      margin-top: .15rem
+    }
+
+    .mood-emoji {
+      font-size: 2rem;
+      line-height: 1
+    }
+
+    /* ── SOS panel ── */
+    #sosPanel {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: .85rem;
+      width: 100%;
+      max-width: 320px;
+      background: #1c0a0a;
+      border: 1px solid #6e1313;
+      border-radius: 1rem;
+      padding: 1.25rem
+    }
+
+    #sosPanel.open {
+      display: flex
+    }
+
+    .sos-sent {
+      font-size: .9rem;
+      color: #f85149;
+      font-weight: 600;
+      text-align: center
+    }
+
+    .sos-hint {
+      font-size: .8rem;
+      color: #7d8590;
+      text-align: center
+    }
+
+    .sos-actions {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      justify-content: center
+    }
+
+    #ctxWrap {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      gap: .5rem
+    }
+
+    #ctxWrap.open {
+      display: flex
+    }
+
+    #ctxInput {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: .6rem;
+      color: #e6edf3;
+      font-size: 1rem;
+      padding: .7rem .9rem;
+      resize: none;
+      font-family: inherit;
+      outline: none
+    }
+
+    #ctxInput:focus {
+      border-color: #388bfd
+    }
+
+    /* ── Status ── */
+    #status {
+      font-size: .85rem;
+      color: #7d8590;
+      text-align: center;
+      min-height: 1.2em;
+      transition: color .3s
+    }
+
+    #status.ok {
+      color: #3fb950
+    }
+
+    #status.err {
+      color: #f85149
+    }
+
+    .ts {
+      font-size: .7rem;
+      color: #484f58;
+      margin-top: .2rem;
+      text-align: center
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Signal de vie</h1>
+
+  <!-- ── Bouton principal OK ── -->
+  <button class="btn btn-ok" id="btnOk" onclick="toggleMood()">
+    🟢 Je suis vivante
+  </button>
+
+  <!-- ── Panneau humeur ── -->
+  <div id="moodPanel">
+    <div class="mood-label">Comment s'est passée ta journée ?</div>
+    <div class="mood-emoji" id="moodEmoji">😐</div>
+    <div class="mood-val" id="moodVal">0.00</div>
+    <div class="slider-wrap">
+      <input type="range" id="moodSlider" min="-1.5708" max="1.5708" step="0.001" value="0"
+        oninput="updateMood(this.value)">
+      <div class="mood-axis"><span>−π/2</span><span>0</span><span>+π/2</span></div>
+    </div>
+    <button class="btn btn-ok" style="padding:.9rem 2rem;font-size:1rem" onclick="sendOk()">
+      ✓ Envoyer
+    </button>
+  </div>
+
+  <!-- ── Bouton SOS ── -->
+  <button class="btn btn-sos" id="btnSos" onclick="triggerSOS()">
+    🆘 SOS
+  </button>
+
+  <!-- ── Panneau SOS post-envoi ── -->
+  <div id="sosPanel">
+    <div class="sos-sent">⚠️ Alerte envoyée</div>
+    <div class="sos-hint">Options supplémentaires :</div>
+    <div class="sos-actions">
+      <button class="btn-sm btn-loc" onclick="sendLocation()">📍 Ma position</button>
+      <button class="btn-sm btn-txt" id="btnCtx" onclick="toggleCtx()">✏️ Contexte</button>
+    </div>
+    <div id="ctxWrap">
+      <textarea id="ctxInput" rows="3" placeholder="Décris la situation…" maxlength="500"></textarea>
+      <button class="btn-sm btn-send" style="align-self:flex-end" onclick="sendContext()">Envoyer ↑</button>
+    </div>
+  </div>
+
+  <div id="status">En attente…</div>
+  <div class="ts" id="ts"></div>
+
+  <script>
+    // ── Configuration ──────────────────────────────────────────────
+    const TOPIC_OK = "elynn-est-vivante-5kgip4mhrlujc";
+    const TOPIC_SOS = "elynn-sos-5kgip4mhrlujc";
+    const SERVER = "https://ntfy.sh";
+    // ──────────────────────────────────────────────────────────────
+
+    const EMOJIS = [
+      [-1.5708, -1.2, "😭"],
+      [-1.2, -0.7, "😢"],
+      [-0.7, -0.2, "😟"],
+      [-0.2, 0.2, "😐"],
+      [0.2, 0.7, "🙂"],
+      [0.7, 1.2, "😊"],
+      [1.2, 1.5708, "😄"]
+    ];
+
+    const statusEl = document.getElementById("status");
+    const tsEl = document.getElementById("ts");
+    const moodPanel = document.getElementById("moodPanel");
+    const sosPanel = document.getElementById("sosPanel");
+    const moodValEl = document.getElementById("moodVal");
+    const moodEmoji = document.getElementById("moodEmoji");
+
+    function setStatus(msg, cls) {
+      statusEl.textContent = msg;
+      statusEl.className = cls || "";
+      if (cls === "ok" || cls === "err") {
+        setTimeout(() => { statusEl.textContent = "En attente…"; statusEl.className = ""; tsEl.textContent = ""; }, 10000);
+      }
+    }
+
+    function now() {
+      return new Date().toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" });
+    }
+
+    // ── Humeur ────────────────────────────────────────────────────
+    function toggleMood() {
+      moodPanel.classList.toggle("open");
+      sosPanel.classList.remove("open");
+    }
+
+    function updateMood(v) {
+      v = parseFloat(v);
+      moodValEl.textContent = v.toFixed(2);
+      for (const [lo, hi, em] of EMOJIS) {
+        if (v >= lo && v < hi) { moodEmoji.textContent = em; break; }
+      }
+      // edge: max value
+      if (v >= 1.5708) moodEmoji.textContent = "😄";
+    }
+
+    async function sendOk() {
+      const v = parseFloat(document.getElementById("moodSlider").value);
+      const em = moodEmoji.textContent;
+      const desc = v > 0.2 ? "bonne journée" : v < -0.2 ? "journée difficile" : "journée neutre";
+      const msg = `Tout va bien — ${now()}\nHumeur du jour : ${em} ${v.toFixed(3)} (${desc})`;
+
+      setStatus("Envoi en cours…");
+      moodPanel.classList.remove("open");
+
+      await ntfy(TOPIC_OK, "✅ Je suis vivante", "default", "white_check_mark", msg);
+    }
+
+    // ── SOS ───────────────────────────────────────────────────────
+    async function triggerSOS() {
+      if (!confirm("⚠️ Envoyer un SOS ?\n\nCela alertera immédiatement votre contact.")) return;
+
+      moodPanel.classList.remove("open");
+      document.getElementById("btnOk").disabled = true;
+      document.getElementById("btnSos").disabled = true;
+
+      setStatus("Envoi SOS…");
+      const ok = await ntfy(TOPIC_SOS, "🆘 SOS — BESOIN D'AIDE", "urgent", "rotating_light",
+        "⚠️ URGENT — SOS envoyé à " + now());
+
+      if (ok) {
+        sosPanel.classList.add("open");
+      }
+      document.getElementById("btnSos").disabled = false;
+      document.getElementById("btnOk").disabled = false;
+    }
+
+    function toggleCtx() {
+      const w = document.getElementById("ctxWrap");
+      w.classList.toggle("open");
+      if (w.classList.contains("open")) document.getElementById("ctxInput").focus();
+    }
+
+    async function sendLocation() {
+      if (!navigator.geolocation) {
+        setStatus("✗ Géolocalisation non disponible", "err"); return;
+      }
+      setStatus("Localisation en cours…");
+      navigator.geolocation.getCurrentPosition(
+        async pos => {
+          const lat = pos.coords.latitude.toFixed(5);
+          const lon = pos.coords.longitude.toFixed(5);
+          const acc = Math.round(pos.coords.accuracy);
+          const maps = `https://maps.google.com/?q=${lat},${lon}`;
+          const msg = `📍 Position GPS — ${now()}\nLat: ${lat} / Lon: ${lon} (±${acc}m)\n${maps}`;
+          await ntfy(TOPIC_SOS, "📍 Position GPS", "urgent", "round_pushpin", msg);
+        },
+        err => {
+          setStatus("✗ Position refusée ou indisponible", "err");
+          tsEl.textContent = err.message;
+        },
+        { timeout: 15000, enableHighAccuracy: true }
+      );
+    }
+
+    async function sendContext() {
+      const txt = document.getElementById("ctxInput").value.trim();
+      if (!txt) { setStatus("✗ Message vide", "err"); return; }
+      const msg = `✏️ Contexte SOS — ${now()}\n${txt}`;
+      await ntfy(TOPIC_SOS, "✏️ Contexte SOS", "urgent", "writing_hand", msg);
+      document.getElementById("ctxInput").value = "";
+      document.getElementById("ctxWrap").classList.remove("open");
+    }
+
+    // ── Transport ntfy ────────────────────────────────────────────
+    async function ntfy(topic, title, priority, tags, body) {
+      try {
+        const r = await fetch(SERVER + "/" + topic, {
+          method: "POST",
+          headers: { "Title": title, "Priority": priority, "Tags": tags },
+          body,
+          mode: "cors",
+          credentials: "omit"
+        });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        setStatus("✓ Envoyé (" + now() + ")", "ok");
+        tsEl.textContent = SERVER + "/" + topic;
+        return true;
+      } catch (e) {
+        setStatus("✗ Échec — vérifiez la connexion", "err");
+        tsEl.textContent = "Erreur : " + e.message;
+        return false;
+      }
+    }
+
+    // ── Init ──────────────────────────────────────────────────────
+    updateMood(0);
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js").catch(() => { });
+    }
+  </script>
+</body>
+
+</html>
