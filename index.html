@@ -251,6 +251,10 @@
       border-color: #388bfd
     }
 
+    #moodText:focus {
+      border-color: #3fb950
+    }
+
     /* Écran de configuration */
     #setupScreen {
       display: flex;
@@ -331,6 +335,18 @@
 
     <h1>Bonjour Elynn</h1>
 
+    <!-- Carte de réponse de Hedi -->
+    <div id="responseCard"
+      style="display:none; width:100%; max-width:320px; background:rgba(56, 139, 253, 0.12); border:1px solid rgba(56, 139, 253, 0.35); border-radius:1rem; padding:1.25rem; text-align:left;">
+      <div
+        style="font-size:0.75rem; color:#58a6ff; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center;">
+        <span>Message de Hedi</span>
+        <span id="responseDate"
+          style="color:#8b949e; font-weight:normal; text-transform:none; font-size:0.7rem;"></span>
+      </div>
+      <div id="responseContent" style="font-size:0.95rem; color:#e6edf3; line-height:1.4; white-space:pre-wrap;"></div>
+    </div>
+
     <button class="btn btn-ok" id="btnOk" onclick="toggleMood()">
       Je suis vivante
     </button>
@@ -344,7 +360,9 @@
           oninput="updateMood(this.value)">
         <div class="mood-axis"><span>−π/2</span><span>0</span><span>+π/2</span></div>
       </div>
-      <button class="btn btn-ok" style="padding:.9rem 2rem;font-size:1rem" onclick="sendOk()">
+      <textarea id="moodText" placeholder="Raconte ta journée (optionnel)…" maxlength="500"
+        style="width:100%; background:#0d1117; border:1px solid #30363d; border-radius:.6rem; color:#e6edf3; font-size:.9rem; padding:.6rem .8rem; resize:none; font-family:inherit; outline:none; transition:border-color .2s; margin-top:0.5rem;"></textarea>
+      <button class="btn btn-ok" style="padding:.9rem 2rem;font-size:1rem; margin-top:0.5rem;" onclick="sendOk()">
         ✓ Envoyer
       </button>
     </div>
@@ -378,11 +396,22 @@
 
     function parseHash() {
       const h = location.hash.replace(/^#/, "");
-      if (!h) return false;
+      if (!h) {
+        const savedOk = localStorage.getItem("EHMS_TOPIC_OK");
+        const savedSos = localStorage.getItem("EHMS_TOPIC_SOS");
+        if (savedOk && savedSos) {
+          TOPIC_OK = savedOk;
+          TOPIC_SOS = savedSos;
+          return true;
+        }
+        return false;
+      }
       const parts = h.split(":");
       if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
       TOPIC_OK = parts[0];
       TOPIC_SOS = parts[1];
+      localStorage.setItem("EHMS_TOPIC_OK", TOPIC_OK);
+      localStorage.setItem("EHMS_TOPIC_SOS", TOPIC_SOS);
       return true;
     }
 
@@ -437,9 +466,18 @@
       const v = parseFloat(document.getElementById("moodSlider").value);
       const em = moodEmoji.textContent;
       const desc = v > 0.2 ? "bonne journée" : v < -0.2 ? "mauvaise journée" : "journée neutre";
+      const txt = document.getElementById("moodText").value.trim();
       moodPanel.classList.remove("open");
-      await ntfy(TOPIC_OK, "Elynn est vivante", "default", "white_check_mark",
-        `Tout va bien - ${now()}\nHumeur : ${em} ${v.toFixed(3)} (${desc})`);
+
+      let bodyText = `Tout va bien - ${now()}\nHumeur : ${em} ${v.toFixed(3)} (${desc})`;
+      if (txt) {
+        bodyText += `\n\nNotes :\n${txt}`;
+      }
+
+      const ok = await ntfy(TOPIC_OK, "Elynn est vivante", "default", "white_check_mark", bodyText);
+      if (ok) {
+        document.getElementById("moodText").value = "";
+      }
     }
 
     // ── SOS ───────────────────────────────────────────────────────
@@ -505,10 +543,34 @@
       }
     }
 
+    async function loadResponse() {
+      try {
+        const r = await fetch(`response.json?t=${Date.now()}`);
+        if (!r.ok) return;
+        const data = await r.json();
+        if (data && data.message && data.message.trim() !== "") {
+          document.getElementById("responseContent").textContent = data.message;
+          document.getElementById("responseDate").textContent = data.timestamp || "";
+          document.getElementById("responseCard").style.display = "block";
+        } else {
+          document.getElementById("responseCard").style.display = "none";
+        }
+      } catch (e) {
+        console.warn("Impossible de charger la réponse du propriétaire:", e);
+      }
+    }
+
     // ── Init ──────────────────────────────────────────────────────
     updateMood(0);
+    loadResponse();
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => { });
   </script>
+
+  <div
+    style="font-size:0.75rem; color:#484f58; margin-top:2.5rem; text-align:center; padding-bottom:1.5rem; width:100%;">
+    <a href="reply.html" style="color:#58a6ff; text-decoration:none; opacity:0.6; transition:opacity 0.2s;"
+      onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">Espace Réponse (Hedi)</a>
+  </div>
 </body>
 
 </html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EHMS - Espace Réponse Propriétaire</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top right, #1a1a2e 0%, #0d1117 100%);
+      color: #e6edf3;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+      background: rgba(22, 27, 34, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid #30363d;
+      border-radius: 1.25rem;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #58a6ff 0%, #bc8cff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #8b949e;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #c9d1d9;
+    }
+
+    textarea,
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 0.6rem;
+      color: #e6edf3;
+      font-size: 0.95rem;
+      padding: 0.75rem 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea:focus,
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #58a6ff;
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      border: none;
+      border-radius: 0.6rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1f6feb 0%, #388bfd 100%);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      margin-top: 0.5rem;
+    }
+
+    .btn-secondary:hover {
+      background: #21262d;
+      border-color: #8b949e;
+    }
+
+    .status {
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 1rem;
+      min-height: 1.25rem;
+    }
+
+    .status.success {
+      color: #3fb950;
+    }
+
+    .status.error {
+      color: #f85149;
+    }
+
+    .status.loading {
+      color: #58a6ff;
+    }
+
+    .info-box {
+      background: rgba(48, 54, 61, 0.2);
+      border: 1px dashed #30363d;
+      border-radius: 0.6rem;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #8b949e;
+      line-height: 1.4;
+      margin-top: 1.5rem;
+    }
+
+    .info-box a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    .info-box a:hover {
+      text-decoration: underline;
+    }
+
+    .back-link {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .back-link a {
+      color: #8b949e;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link a:hover {
+      color: #e6edf3;
+    }
+
+    /* Toggle password visibility styling */
+    .password-wrap {
+      position: relative;
+      display: flex;
+    }
+
+    .password-wrap input {
+      padding-right: 3rem;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #8b949e;
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 0.25rem;
+    }
+
+    /* Config Panel */
+    .config-toggle {
+      font-size: 0.8rem;
+      color: #8b949e;
+      text-align: right;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .config-toggle:hover {
+      color: #e6edf3;
+    }
+
+    .config-panel {
+      display: none;
+      border-top: 1px solid #21262d;
+      margin-top: 1rem;
+      padding-top: 1rem;
+    }
+
+    .config-panel.open {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Espace Réponse</h1>
+    <div class="subtitle">Répondre à Elynn sur l'application</div>
+
+    <form id="replyForm" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label for="message">Votre Message</label>
+        <textarea id="message" placeholder="Écrivez votre message ici…" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label for="pat">Jeton d'accès GitHub (PAT)</label>
+          <span class="config-toggle" onclick="toggleConfig()">🔧 Config avancée</span>
+        </div>
+        <div class="password-wrap">
+          <input type="password" id="pat" placeholder="github_pat_..." required>
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">Voir</button>
+        </div>
+      </div>
+
+      <div id="configPanel" class="config-panel">
+        <div class="form-group">
+          <label for="repoOwner">Propriétaire du dépôt</label>
+          <input type="text" id="repoOwner" placeholder="ex: ohhddo">
+        </div>
+        <div class="form-group">
+          <label for="repoName">Nom du dépôt</label>
+          <input type="text" id="repoName" placeholder="ex: EHMS">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="btnSubmit">
+        <span>Sauvegarder & Publier</span>
+      </button>
+    </form>
+
+    <div class="status" id="statusMsg"></div>
+
+    <div class="info-box">
+      <strong>Comment ça marche ?</strong><br>
+      Votre message est enregistré dans le fichier <code>response.json</code> du dépôt GitHub et sera affiché sur le
+      téléphone d'Elynn.
+      <br><br>
+      1. Générez un jeton GitHub (PAT) classique avec le rôle <code>repo</code> ou un jeton fin (fine-grained) avec
+      accès en écriture sur le dépôt EHMS.<br>
+      2. Collez-le ci-dessus. Il sera sauvegardé dans votre navigateur.<br>
+      <a href="https://github.com/settings/tokens" target="_blank">→ Créer un jeton sur GitHub</a>
+    </div>
+
+    <button class="btn btn-secondary" onclick="handleEditOnGithub()">
+      Modifier directement sur GitHub (sans jeton)
+    </button>
+
+    <div class="back-link">
+      <a href="index.html">← Retour à l'application</a>
+    </div>
+  </div>
+
+  <script>
+    // Config locale
+    let GITHUB_OWNER = "ohhddo";
+    let GITHUB_REPO = "EHMS";
+
+    // Charger la configuration
+    function init() {
+      // Inferrer depuis l'URL
+      if (location.hostname.endsWith(".github.io")) {
+        GITHUB_OWNER = location.hostname.split(".")[0];
+        const parts = location.pathname.split("/").filter(Boolean);
+        if (parts.length > 0) {
+          GITHUB_REPO = parts[0];
+        }
+      }
+
+      document.getElementById("repoOwner").value = GITHUB_OWNER;
+      document.getElementById("repoName").value = GITHUB_REPO;
+
+      // Charger le PAT sauvegardé
+      const savedPat = localStorage.getItem("EHMS_GH_PAT");
+      if (savedPat) {
+        document.getElementById("pat").value = savedPat;
+      }
+
+      // Charger le message actuel
+      loadCurrentMessage();
+    }
+
+    function toggleConfig() {
+      const p = document.getElementById("configPanel");
+      p.classList.toggle("open");
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById("pat");
+      const btn = document.querySelector(".toggle-password");
+      if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "Masquer";
+      } else {
+        input.type = "password";
+        btn.textContent = "Voir";
+      }
+    }
+
+    async function loadCurrentMessage() {
+      try {
+        const r = await fetch(`response.json?t=${Date.now()}`);
+        if (r.ok) {
+          const data = await r.json();
+          if (data && data.message) {
+            document.getElementById("message").value = data.message;
+          }
+        }
+      } catch (e) {
+        console.warn("Impossible de charger le message actuel:", e);
+      }
+    }
+
+    function setStatus(msg, type) {
+      const el = document.getElementById("statusMsg");
+      el.textContent = msg;
+      el.className = "status " + (type || "");
+    }
+
+    function handleEditOnGithub() {
+      const owner = document.getElementById("repoOwner").value.trim() || GITHUB_OWNER;
+      const repo = document.getElementById("repoName").value.trim() || GITHUB_REPO;
+      const url = `https://github.com/${owner}/${repo}/edit/main/response.json`;
+      window.open(url, "_blank");
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+
+      const pat = document.getElementById("pat").value.trim();
+      const message = document.getElementById("message").value.trim();
+      const owner = document.getElementById("repoOwner").value.trim() || GITHUB_OWNER;
+      const repo = document.getElementById("repoName").value.trim() || GITHUB_REPO;
+
+      if (!pat) {
+        setStatus("Veuillez saisir votre jeton d'accès GitHub (PAT).", "error");
+        return;
+      }
+
+      // Sauvegarder le PAT pour la prochaine fois
+      localStorage.setItem("EHMS_GH_PAT", pat);
+
+      const btnSubmit = document.getElementById("btnSubmit");
+      btnSubmit.disabled = true;
+      setStatus("Vérification et publication en cours…", "loading");
+
+      try {
+        const filePath = "response.json";
+        const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+
+        // 1. Récupérer le SHA du fichier existant (requis pour la mise à jour)
+        let sha = null;
+        const getRes = await fetch(apiUrl, {
+          headers: {
+            "Authorization": `token ${pat}`,
+            "Accept": "application/vnd.github+json"
+          }
+        });
+
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+        } else if (getRes.status !== 404) {
+          throw new Error(`Erreur lors de la récupération du fichier (${getRes.status})`);
+        }
+
+        // 2. Préparer le nouveau contenu
+        const timestamp = new Date().toLocaleString("fr-FR", {
+          dateStyle: "short",
+          timeStyle: "short"
+        });
+
+        const fileContent = JSON.stringify({
+          message: message,
+          timestamp: timestamp
+        }, null, 2);
+
+        // Encodage Base64 UTF-8 correct
+        const utf8Bytes = new TextEncoder().encode(fileContent);
+        const base64Content = btoa(String.fromCharCode(...utf8Bytes));
+
+        // 3. Envoyer la mise à jour
+        const putRes = await fetch(apiUrl, {
+          method: "PUT",
+          headers: {
+            "Authorization": `token ${pat}`,
+            "Accept": "application/vnd.github+json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: `Update response.json (Espace Réponse) - ${timestamp}`,
+            content: base64Content,
+            sha: sha || undefined
+          })
+        });
+
+        if (!putRes.ok) {
+          const errData = await putRes.json().catch(() => ({}));
+          throw new Error(errData.message || `Erreur lors de la publication (${putRes.status})`);
+        }
+
+        setStatus("✓ Réponse publiée avec succès ! (Le déploiement GitHub Pages peut prendre 1 à 2 minutes)", "success");
+      } catch (e) {
+        console.error(e);
+        setStatus("✗ Erreur : " + e.message, "error");
+      } finally {
+        btnSubmit.disabled = false;
+      }
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
