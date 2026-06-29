@@ -4,529 +4,633 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#1a1a2e">
-  <title>Elynn Health Monitoring System</title>
+  <meta name="theme-color" content="#070a13">
+  <title>Bijection-Communicator</title>
   <link rel="manifest" href="manifest.json">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
-
-    html,
-    body {
-      height: 100%;
-      font-family: system-ui, sans-serif;
-      background: #0d1117;
-      color: #e6edf3
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      gap: 1.5rem;
-      min-height: 100vh
-    }
-
-    h1 {
-      font-size: 1.1rem;
-      font-weight: 400;
-      color: #7d8590;
-      text-align: center;
-      letter-spacing: .05em;
-      text-transform: uppercase
-    }
-
-    .btn {
-      display: block;
-      width: 100%;
-      max-width: 320px;
-      padding: 1.4rem 2rem;
-      border: none;
-      border-radius: 1rem;
-      font-size: 1.3rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity .15s, transform .1s;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none
-    }
-
-    .btn:active {
-      transform: scale(.97);
-      opacity: .85
-    }
-
-    .btn:disabled {
-      opacity: .4;
-      cursor: default
-    }
-
-    .btn-ok {
-      background: #1a7f37;
-      color: #fff
-    }
-
-    .btn-sos {
-      background: #da3633;
-      color: #fff;
-      font-size: 1.5rem;
-      letter-spacing: .08em
-    }
-
-    .btn-sm {
-      display: inline-block;
-      width: auto;
-      padding: .75rem 1.2rem;
-      font-size: 1rem;
-      border-radius: .75rem;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      transition: opacity .15s, transform .1s
-    }
-
-    .btn-sm:active {
-      transform: scale(.97);
-      opacity: .8
-    }
-
-    .btn-loc {
-      background: #bd00f7;
-      color: #fff;
-      width: 100%;
-    }
-
-    .btn-txt {
-      background: #f15c07;
-      color: #fff;
-      width: 100%;
-    }
-
-    .btn-send {
-      background: #388bfd;
-      color: #fff;
-      width: 100%;
-    }
-
-    #moodPanel {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-      max-width: 320px;
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 1rem;
-      padding: 1.25rem
-    }
-
-    #moodPanel.open {
-      display: flex
-    }
-
-    .mood-label {
-      font-size: .85rem;
-      color: #7d8590;
-      text-align: center
-    }
-
-    .mood-val {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #e6edf3;
-      min-width: 4rem;
-      text-align: center;
-      font-family: monospace
-    }
-
-    .slider-wrap {
-      width: 100%;
-      position: relative
-    }
-
-    input[type=range] {
-      width: 100%;
-      height: 6px;
-      -webkit-appearance: none;
-      appearance: none;
-      background: linear-gradient(to right, #da3633 0%, #e3b341 50%, #3fb950 100%);
-      border-radius: 3px;
-      outline: none;
-      cursor: pointer
-    }
-
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #e6edf3;
-      border: 2px solid #30363d;
-      cursor: pointer
-    }
-
-    .mood-axis {
-      display: flex;
-      justify-content: space-between;
-      font-size: .65rem;
-      color: #484f58;
-      margin-top: .15rem
-    }
-
-    .mood-emoji {
-      font-size: 2rem;
-      line-height: 1
-    }
-
-    #sosPanel {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: .85rem;
-      width: 100%;
-      max-width: 320px;
-      background: #1c0a0a;
-      border: 1px solid #6e1313;
-      border-radius: 1rem;
-      padding: 1.25rem
-    }
-
-    #sosPanel.open {
-      display: flex
-    }
-
-    .sos-sent {
-      font-size: .9rem;
-      color: #f85149;
-      font-weight: 600;
-      text-align: center
-    }
-
-    .sos-hint {
-      font-size: .8rem;
-      color: #7d8590;
-      text-align: center
-    }
-
-    .sos-actions {
-      display: flex;
-      gap: .75rem;
-      flex-wrap: wrap;
-      justify-content: center
-    }
-
-    #ctxWrap {
-      width: 100%;
-      display: none;
-      flex-direction: column;
-      gap: .5rem
-    }
-
-    #ctxWrap.open {
-      display: flex
-    }
-
-    #ctxInput {
-      width: 100%;
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: .6rem;
-      color: #e6edf3;
-      font-size: 1rem;
-      padding: .7rem .9rem;
-      resize: none;
-      font-family: inherit;
-      outline: none
-    }
-
-    #ctxInput:focus {
-      border-color: #388bfd
-    }
-
-    #moodText:focus {
-      border-color: #3fb950
-    }
-
-    /* Écran de configuration */
-    #setupScreen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-      max-width: 320px;
-      text-align: center
-    }
-
-    #setupScreen p {
-      font-size: .85rem;
-      color: #7d8590;
-      line-height: 1.5
-    }
-
-    #setupScreen code {
-      display: block;
-      font-size: .7rem;
-      color: #484f58;
-      word-break: break-all;
-      padding: .5rem;
-      background: #161b22;
-      border-radius: .5rem;
-      margin-top: .5rem
-    }
-
-    #mainScreen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.5rem;
-      width: 100%
-    }
-
-    #mainScreen.ready {
-      display: flex
-    }
-
-    #status {
-      font-size: .85rem;
-      color: #7d8590;
-      text-align: center;
-      min-height: 1.2em;
-      transition: color .3s
-    }
-
-    #status.ok {
-      color: #3fb950
-    }
-
-    #status.err {
-      color: #f85149
-    }
-
-    .ts {
-      font-size: .7rem;
-      color: #484f58;
-      margin-top: .2rem;
-      text-align: center
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
 
-  <!-- Écran affiché si pas de topics dans l'URL -->
-  <div id="setupScreen">
-    <p>Cette page nécessite une URL configurée.<br>
-      Le lien que vous avez reçu doit contenir vos identifiants de notification.</p>
-    <p style="color:#f85149;font-size:.8rem">Si vous avez reçu un lien direct, vérifiez qu'il est complet.</p>
-    <code id="urlExample"></code>
+  <!-- ÉCRAN SETUP : Manque de topics dans l'URL -->
+  <div id="setupScreen" class="panel">
+    <div class="tag-sec" style="align-self: flex-start;">Configuration Requise</div>
+    <h1>TUNNEL INCOMPLET</h1>
+    <p style="font-size: 0.9rem; color: #94a3b8; line-height: 1.5;">
+      Cette liaison nécessite des clés d'accès de notification dans l'URL.<br><br>
+      Le format de l'adresse doit correspondre à :
+    </p>
+    <code id="urlExample"
+      style="display: block; font-size: 0.75rem; color: #f43f5e; background: #090d16; padding: 0.75rem; border-radius: 0.5rem; word-break: break-all; text-align: center; border: 1px solid rgba(244,63,94,0.2);"></code>
+    <p style="font-size: 0.8rem; color: #64748b;">
+      Consultez le guide de déploiement pour initialiser vos topics secrets ntfy.sh.
+    </p>
   </div>
 
-  <!-- Interface principale -->
+  <!-- ÉCRAN IDENTITÉ : Choix Elynn ou Hedi -->
+  <div id="identityScreen" class="panel">
+    <div class="tag-sec" style="align-self: flex-start;">Contrôle de Sécurité</div>
+    <h1 style="border-bottom: none; padding-bottom: 0;">QUI ÊTES-VOUS ?</h1>
+    <p style="font-size: 0.85rem; color: #64748b; text-align: center;">
+      IDENTIFICATION REQUISE POUR ÉTABLIR LE LIEN
+    </p>
+    <div class="identity-box">
+      <div class="identity-card" onclick="setAgent('elynn')">
+        [ AGENT ELYNN ]
+      </div>
+      <div class="identity-card" onclick="setAgent('hedi')">
+        [ AGENT HEDI ]
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCRAN PRINCIPAL -->
   <div id="mainScreen">
 
-    <h1>Bonjour Elynn</h1>
-
-    <!-- Carte de réponse de Hedi -->
-    <div id="responseCard"
-      style="display:none; width:100%; max-width:320px; background:rgba(56, 139, 253, 0.12); border:1px solid rgba(56, 139, 253, 0.35); border-radius:1rem; padding:1.25rem; text-align:left;">
-      <div
-        style="font-size:0.75rem; color:#58a6ff; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center;">
-        <span>Message de Hedi</span>
-        <span id="responseDate"
-          style="color:#8b949e; font-weight:normal; text-transform:none; font-size:0.7rem;"></span>
+    <!-- Topbar info -->
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div class="tag-sec">
+        <span class="pulse-dot"></span>
+        <span id="tunnelStatus">LIAISON ACTIVE</span>
       </div>
-      <div id="responseContent" style="font-size:0.95rem; color:#e6edf3; line-height:1.4; white-space:pre-wrap;"></div>
-    </div>
-
-    <button class="btn btn-ok" id="btnOk" onclick="toggleMood()">
-      Je suis vivante
-    </button>
-
-    <div id="moodPanel">
-      <div class="mood-label">Comment s'est passée ta journée ?</div>
-      <div class="mood-emoji" id="moodEmoji">😐</div>
-      <div class="mood-val" id="moodVal">0.00</div>
-      <div class="slider-wrap">
-        <input type="range" id="moodSlider" min="-1.5708" max="1.5708" step="0.001" value="0"
-          oninput="updateMood(this.value)">
-        <div class="mood-axis"><span>−π/2</span><span>0</span><span>+π/2</span></div>
-      </div>
-      <textarea id="moodText" placeholder="Raconte ta journée (optionnel)…" maxlength="500"
-        style="width:100%; background:#0d1117; border:1px solid #30363d; border-radius:.6rem; color:#e6edf3; font-size:.9rem; padding:.6rem .8rem; resize:none; font-family:inherit; outline:none; transition:border-color .2s; margin-top:0.5rem;"></textarea>
-      <button class="btn btn-ok" style="padding:.9rem 2rem;font-size:1rem; margin-top:0.5rem;" onclick="sendOk()">
-        ✓ Envoyer
+      <button class="config-trigger" onclick="openSettings()">
+        [ CONFIG_SYS ]
       </button>
     </div>
 
-    <button class="btn btn-sos" id="btnSos" onclick="triggerSOS()">
-      SOS
-    </button>
+    <!-- Interface agent principal -->
+    <div class="panel" style="display: flex; flex-direction: column; gap: 1.25rem;">
+      <h1 style="font-size: 1.1rem; color: #94a3b8;">
+        AGENT: <span id="mainAgentName" style="color:#06b6d4; font-weight:600;">...</span>
+      </h1>
 
-    <div id="sosPanel">
-      <div class="sos-sent">⚠️ Alerte envoyée</div>
-      <div class="sos-hint">Options supplémentaires :</div>
-      <div class="sos-actions">
-        <button class="btn-sm btn-loc" onclick="sendLocation()">📍 Position</button>
-        <button class="btn-sm btn-txt" onclick="toggleCtx()">✏️ Contexte</button>
+      <!-- Dernier message de l'autre agent (Carte de Réponse) -->
+      <div id="responseCard" class="response-card" style="display: none;">
+        <div class="response-header">
+          <span id="responseTitle">Signal</span>
+          <span id="responseIcon">💬</span>
+        </div>
+        <div class="response-body" id="responseContent"></div>
+        <div class="mono" id="responseDate"
+          style="font-size: 0.7rem; color: #64748b; margin-top: 0.75rem; text-align: right;"></div>
       </div>
-      <div id="ctxWrap">
-        <textarea id="ctxInput" rows="3" placeholder="Décris la situation…" maxlength="500"></textarea>
-        <button class="btn-sm btn-send" style="align-self:flex-end" onclick="sendContext()">Envoyer ↑</button>
+
+      <!-- Bouton OK -->
+      <button class="btn btn-ok" id="btnOk" onclick="toggleMoodPanel()">
+        SIGNAL DE VIE
+      </button>
+
+      <!-- Panel Humeur -->
+      <div id="moodPanel" class="toggle-panel">
+        <div class="panel-label">État du moral</div>
+        <div class="slider-container">
+          <div class="slider-info">
+            <span id="moodEmoji" style="font-size: 1.8rem;">😐</span>
+            <span class="mono slider-value" id="moodVal">0.00 RAD</span>
+          </div>
+          <input type="range" id="moodSlider" min="-12" max="12" step="1" value="0" oninput="updateMood(this.value)">
+          <div class="slider-axis">
+            <span class="mono">−π/2 (MIN)</span>
+            <span class="mono">0</span>
+            <span class="mono">+π/2 (MAX)</span>
+          </div>
+        </div>
+
+        <textarea id="moodText" placeholder="Message (optionnel)..." maxlength="500" rows="3"></textarea>
+
+        <label class="checkbox-container">
+          <input type="checkbox" id="moodServerSave" checked>
+          <span class="checkbox-custom"></span>
+          <span>Sauvegarder sur le serveur</span>
+        </label>
+
+        <button class="btn btn-ok btn-sm" onclick="sendOk()">
+          ✓ Transmettre
+        </button>
+      </div>
+
+      <!-- Bouton SOS -->
+      <button class="btn btn-sos" id="btnSos" onclick="triggerSOS()">
+        ALERTE SOS
+      </button>
+
+      <!-- Panel SOS -->
+      <div id="sosPanel" class="toggle-panel"
+        style="border-color: rgba(244, 63, 94, 0.4); background: rgba(24, 15, 20, 0.95);">
+        <div class="panel-label" style="color: #fb7185; font-weight: 600;">⚠️ ALERTE DE DÉTRESSE ACTIQUE</div>
+
+        <div style="display: flex; gap: 0.75rem; width: 100%;">
+          <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="sendLocation()">
+            📍 Localiser GPS
+          </button>
+          <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="toggleCtxInput()">
+            ✏️ Plus d'infos
+          </button>
+        </div>
+
+        <div id="ctxWrap" style="display: none; flex-direction: column; gap: 0.75rem; width: 100%;">
+          <textarea id="ctxInput" placeholder="Description de la situation d'urgence…" maxlength="500"
+            rows="3"></textarea>
+
+          <label class="checkbox-container">
+            <input type="checkbox" id="sosServerSave" checked>
+            <span class="checkbox-custom"></span>
+            <span>Cloner sur le serveur sécurisé</span>
+          </label>
+
+          <button class="btn btn-sos btn-sm" onclick="sendContext()">
+            Transmettre Détails ↑
+          </button>
+        </div>
+      </div>
+
+      <!-- Console Log -->
+      <div class="mono" id="statusLog">En attente d'instruction...</div>
+    </div>
+  </div>
+
+  <!-- MODAL DE RÉGLAGES -->
+  <div id="settingsOverlay" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-title">Configuration Système</div>
+
+      <!-- Identity Switch -->
+      <div class="form-group">
+        <label>Identité active</label>
+        <div style="display: flex; gap: 0.5rem; width: 100%;">
+          <button type="button" class="btn btn-secondary btn-sm" id="setElynnBtn" style="flex: 1;"
+            onclick="setAgent('elynn', true)">Elynn</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="setHediBtn" style="flex: 1;"
+            onclick="setAgent('hedi', true)">Hedi</button>
+        </div>
+      </div>
+
+      <!-- GitHub Clone Config -->
+      <div
+        style="border-top: 1px solid #1e293b; padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.75rem;">
+        <div class="panel-label" style="font-size: 0.7rem; color: #06b6d4;">Serveur GitHub (Sauvegarde)</div>
+
+        <div class="form-group">
+          <label for="pat">GitHub PAT (Jeton)</label>
+          <div style="position: relative; display: flex;">
+            <input type="password" id="pat" placeholder="github_pat_...">
+            <button type="button" class="mono" onclick="togglePatView()"
+              style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; font-size: 0.7rem; cursor: pointer; padding: 0.25rem;">Voir</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="repoOwner">Propriétaire Dépôt</label>
+          <input type="text" id="repoOwner" placeholder="ex: ohhddo">
+        </div>
+
+        <div class="form-group">
+          <label for="repoName">Nom Dépôt</label>
+          <input type="text" id="repoName" placeholder="ex: Bijection-Communicator">
+        </div>
+      </div>
+
+      <!-- Ntfy Topics Info -->
+      <div
+        style="border-top: 1px solid #1e293b; padding-top: 0.75rem; font-size: 0.75rem; color: #64748b; line-height: 1.4;">
+        <div class="panel-label" style="font-size: 0.7rem; color: #64748b; margin-bottom: 0.25rem;">Topics Reseau Active
+        </div>
+        <div class="mono"
+          style="word-break: break-all; background: #090d16; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.65rem;">
+          OK: <span id="activeTopicOk" style="color: #94a3b8;">-</span><br>
+          SOS: <span id="activeTopicSos" style="color: #94a3b8;">-</span>
+        </div>
+      </div>
+
+      <!-- Modal Actions -->
+      <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+        <button class="btn btn-ok btn-sm" onclick="saveSettings()">
+          Appliquer Réglages
+        </button>
+        <button class="btn btn-secondary btn-sm" style="color: #fb7185; border-color: rgba(244,63,94,0.3);"
+          onclick="clearAllData()">
+          Réinitialiser l'App
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="closeSettings()">
+          Fermer
+        </button>
       </div>
     </div>
-
-    <div id="status">En attente…</div>
-    <div class="ts" id="ts"></div>
   </div>
 
   <script>
-    // ── Lecture des topics depuis le hash de l'URL ─────────────────
+    // ── Configuration Initiale et Réseau ───────────────────────────
     const SERVER = "https://ntfy.sh";
-    let TOPIC_OK = null;
-    let TOPIC_SOS = null;
+    let TOPIC_ELYNN_OK = null;
+    let TOPIC_ELYNN_SOS = null;
+    let TOPIC_HEDI_OK = null;
+    let TOPIC_HEDI_SOS = null;
+    let currentAgent = null; // 'elynn' ou 'hedi'
 
+    // Variables GitHub par défaut
+    let defaultOwner = "ohhddo";
+    let defaultRepo = "Bijection-Communicator";
+    if (location.hostname.endsWith(".github.io")) {
+      defaultOwner = location.hostname.split(".")[0];
+      const parts = location.pathname.split("/").filter(Boolean);
+      if (parts.length > 0) {
+        defaultRepo = parts[0];
+      }
+    }
+
+    // ── Analyse de l'URL hash ─────────────────────────────────────
     function parseHash() {
       const h = location.hash.replace(/^#/, "");
       if (!h) {
-        const savedOk = localStorage.getItem("EHMS_TOPIC_OK");
-        const savedSos = localStorage.getItem("EHMS_TOPIC_SOS");
-        if (savedOk && savedSos) {
-          TOPIC_OK = savedOk;
-          TOPIC_SOS = savedSos;
+        // Essayer de charger depuis le stockage local
+        const savedOkE = localStorage.getItem("TOPIC_ELYNN_OK");
+        const savedSosE = localStorage.getItem("TOPIC_ELYNN_SOS");
+        const savedOkH = localStorage.getItem("TOPIC_HEDI_OK");
+        const savedSosH = localStorage.getItem("TOPIC_HEDI_SOS");
+        if (savedOkE && savedSosE && savedOkH && savedSosH) {
+          TOPIC_ELYNN_OK = savedOkE;
+          TOPIC_ELYNN_SOS = savedSosE;
+          TOPIC_HEDI_OK = savedOkH;
+          TOPIC_HEDI_SOS = savedSosH;
           return true;
         }
         return false;
       }
       const parts = h.split(":");
-      if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
-      TOPIC_OK = parts[0];
-      TOPIC_SOS = parts[1];
-      localStorage.setItem("EHMS_TOPIC_OK", TOPIC_OK);
-      localStorage.setItem("EHMS_TOPIC_SOS", TOPIC_SOS);
+      if (parts.length === 4 && parts.every(p => p.trim())) {
+        TOPIC_ELYNN_OK = parts[0];
+        TOPIC_ELYNN_SOS = parts[1];
+        TOPIC_HEDI_OK = parts[2];
+        TOPIC_HEDI_SOS = parts[3];
+      } else if (parts.length === 2 && parts[0] && parts[1]) {
+        // Fallback backward compatible: dédoublement automatique
+        TOPIC_ELYNN_OK = parts[0] + "-elynn";
+        TOPIC_ELYNN_SOS = parts[1] + "-elynn";
+        TOPIC_HEDI_OK = parts[0] + "-hedi";
+        TOPIC_HEDI_SOS = parts[1] + "-hedi";
+      } else {
+        return false;
+      }
+
+      localStorage.setItem("TOPIC_ELYNN_OK", TOPIC_ELYNN_OK);
+      localStorage.setItem("TOPIC_ELYNN_SOS", TOPIC_ELYNN_SOS);
+      localStorage.setItem("TOPIC_HEDI_OK", TOPIC_HEDI_OK);
+      localStorage.setItem("TOPIC_HEDI_SOS", TOPIC_HEDI_SOS);
       return true;
     }
 
-    if (parseHash()) {
-      document.getElementById("mainScreen").classList.add("ready");
-      document.getElementById("setupScreen").style.display = "none";
-    } else {
-      document.getElementById("setupScreen").style.display = "flex";
-      document.getElementById("urlExample").textContent =
-        "Format attendu :\n" + location.origin + location.pathname + "#topic-ok:topic-sos";
+    // ── Routage et Chargement initial ──────────────────────────────
+    function init() {
+      const hasTopics = parseHash();
+      if (!hasTopics) {
+        document.getElementById("setupScreen").style.display = "flex";
+        document.getElementById("urlExample").textContent =
+          location.origin + location.pathname + "#elynn_ok:elynn_sos:hedi_ok:hedi_sos";
+        return;
+      }
+
+      // Topics configurés, vérifier l'identité de l'agent
+      currentAgent = localStorage.getItem("IDENTITY");
+      if (!currentAgent) {
+        document.getElementById("identityScreen").style.display = "flex";
+        return;
+      }
+
+      // Tout est OK, lancer l'application principale
+      setupMainDashboard();
     }
 
-    // ── Utilitaires ───────────────────────────────────────────────
+    function setAgent(agent, fromSettings = false) {
+      currentAgent = agent;
+      localStorage.setItem("IDENTITY", agent);
+
+      document.getElementById("identityScreen").style.display = "none";
+
+      if (fromSettings) {
+        closeSettings();
+      }
+      setupMainDashboard();
+    }
+
+    function setupMainDashboard() {
+      document.getElementById("mainScreen").classList.add("ready");
+      document.getElementById("mainScreen").style.display = "flex";
+
+      // Adaptation des textes et de l'état
+      const isElynn = currentAgent === 'elynn';
+      document.getElementById("mainAgentName").textContent = isElynn ? "ELYNN" : "HEDI";
+      document.getElementById("btnOk").textContent = isElynn ? "JE SUIS VIVANTE" : "JE SUIS VIVANT";
+
+      // Boutons dans les réglages
+      document.getElementById("setElynnBtn").className = isElynn ? "btn btn-ok btn-sm" : "btn btn-secondary btn-sm";
+      document.getElementById("setHediBtn").className = !isElynn ? "btn btn-ok btn-sm" : "btn btn-secondary btn-sm";
+
+      // Renseigner les infos réseau dans le modal
+      const activeOk = isElynn ? TOPIC_ELYNN_OK : TOPIC_HEDI_OK;
+      const activeSos = isElynn ? TOPIC_ELYNN_SOS : TOPIC_HEDI_SOS;
+      document.getElementById("activeTopicOk").textContent = activeOk;
+      document.getElementById("activeTopicSos").textContent = activeSos;
+
+      // Charger les variables de sauvegarde dans le modal
+      document.getElementById("pat").value = localStorage.getItem("GH_PAT") || "";
+      document.getElementById("repoOwner").value = localStorage.getItem("GH_OWNER") || defaultOwner;
+      document.getElementById("repoName").value = localStorage.getItem("GH_REPO") || defaultRepo;
+
+      updateMood(0);
+      loadResponse();
+    }
+
+    // ── Utilitaires d'Affichage ─────────────────────────────────────
     const EMOJIS = [
       [-1.5708, -1.2, "😭"], [-1.2, -0.7, "😢"], [-0.7, -0.2, "😟"],
       [-0.2, 0.2, "😐"], [0.2, 0.7, "🙂"], [0.7, 1.2, "😊"], [1.2, 1.5708, "😄"]
     ];
 
-    const statusEl = document.getElementById("status");
-    const tsEl = document.getElementById("ts");
+    const logEl = document.getElementById("statusLog");
     const moodPanel = document.getElementById("moodPanel");
     const sosPanel = document.getElementById("sosPanel");
     const moodValEl = document.getElementById("moodVal");
     const moodEmoji = document.getElementById("moodEmoji");
 
-    function setStatus(msg, cls) {
-      statusEl.textContent = msg;
-      statusEl.className = cls || "";
-      if (cls === "ok" || cls === "err")
-        setTimeout(() => { statusEl.textContent = "En attente…"; statusEl.className = ""; tsEl.textContent = ""; }, 10000);
+    function setLog(msg, cls) {
+      logEl.textContent = `[ LOG: ${msg.toUpperCase()} ]`;
+      logEl.className = "mono " + (cls ? `log-${cls}` : "");
+
+      // Restauration automatique
+      if (cls === "success" || cls === "error") {
+        setTimeout(() => {
+          logEl.textContent = "[ LOG: EN ATTENTE D'INSTRUCTION... ]";
+          logEl.className = "mono";
+        }, 10000);
+      }
     }
 
     function now() {
       return new Date().toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" });
     }
 
-    // ── Humeur ────────────────────────────────────────────────────
-    function toggleMood() {
+    // ── Gestion de l'Humeur / OK ──────────────────────────────────
+    function toggleMoodPanel() {
       moodPanel.classList.toggle("open");
       sosPanel.classList.remove("open");
+      document.getElementById("ctxWrap").style.display = "none";
+    }
+
+    function getGCD(a, b) {
+      return b ? getGCD(b, a % b) : a;
+    }
+
+    function formatPiFraction(n) {
+      if (n === 0) return "0 RAD";
+      const sign = n < 0 ? "−" : "+";
+      // Always show as n×π/24, then simplify for display
+      const gcd = getGCD(Math.abs(n), 24);
+      const num = Math.abs(n) / gcd;
+      const den = 24 / gcd;
+      if (den === 1) {
+        const numStr = num === 1 ? "" : num.toString();
+        return `${sign}${numStr}π RAD`;
+      }
+      const numStr = num === 1 ? "" : num.toString();
+      return `${sign}${numStr}π/${den} RAD`;
     }
 
     function updateMood(v) {
-      v = parseFloat(v);
-      moodValEl.textContent = v.toFixed(2);
-      for (const [lo, hi, em] of EMOJIS)
-        if (v >= lo && v < hi) { moodEmoji.textContent = em; return; }
+      const index = parseInt(v, 10);
+      const rad = index * (Math.PI / 24);
+      moodValEl.textContent = formatPiFraction(index);
+      for (const [lo, hi, em] of EMOJIS) {
+        if (rad >= lo && rad < hi) {
+          moodEmoji.textContent = em;
+          return;
+        }
+      }
       moodEmoji.textContent = "😄";
     }
 
     async function sendOk() {
-      const v = parseFloat(document.getElementById("moodSlider").value);
+      const sliderVal = parseInt(document.getElementById("moodSlider").value, 10);
+      const rad = sliderVal * (Math.PI / 24);
       const em = moodEmoji.textContent;
-      const desc = v > 0.2 ? "bonne journée" : v < -0.2 ? "mauvaise journée" : "journée neutre";
+      const formattedRad = formatPiFraction(sliderVal);
+      const desc = rad > 0.2 ? "bonne journée" : rad < -0.2 ? "mauvaise journée" : "journée neutre";
       const txt = document.getElementById("moodText").value.trim();
-      moodPanel.classList.remove("open");
+      const serverClone = document.getElementById("moodServerSave").checked;
+      const targetName = currentAgent === "elynn" ? "Hedi" : "Elynn";
 
-      let bodyText = `Tout va bien - ${now()}\nHumeur : ${em} ${v.toFixed(3)} (${desc})`;
+      moodPanel.classList.remove("open");
+      document.getElementById("btnOk").disabled = true;
+
+      setLog(`Connexion au téléphone de ${targetName}...`, "process");
+
+      const title = currentAgent === "elynn" ? "Elynn est vivante" : "Hedi est vivant";
+      let bodyText = `Tout va bien - ${now()}\nHumeur : ${em} ${formattedRad} (${desc})`;
       if (txt) {
         bodyText += `\n\nNotes :\n${txt}`;
       }
 
-      const ok = await ntfy(TOPIC_OK, "Elynn est vivante", "default", "white_check_mark", bodyText);
-      if (ok) {
+      // 1. Envoyer ntfy
+      const activeTopic = currentAgent === "elynn" ? TOPIC_ELYNN_OK : TOPIC_HEDI_OK;
+      const ntfySuccess = await ntfy(activeTopic, title, "default", "white_check_mark", bodyText);
+
+      // 2. Cloner sur le serveur si coché
+      let serverSuccess = !serverClone; // true si pas de sauvegarde demandée
+      if (serverClone) {
+        setLog(`Sauvegarde sur le serveur...`, "process");
+        const payload = {
+          type: "ok",
+          mood: em,
+          value: formattedRad,
+          message: txt || `Tout va bien (${desc})`,
+          timestamp: now()
+        };
+        try {
+          serverSuccess = await saveToServer(`${currentAgent}_status.json`, payload);
+        } catch (e) {
+          serverSuccess = false;
+        }
+      }
+
+      document.getElementById("btnOk").disabled = false;
+
+      if (ntfySuccess && serverSuccess) {
+        setLog(`Message envoyé à ${targetName} et gardé sur le serveur`, "success");
         document.getElementById("moodText").value = "";
+      } else if (ntfySuccess && !serverClone) {
+        setLog(`Message envoyé à ${targetName}`, "success");
+        document.getElementById("moodText").value = "";
+      } else if (ntfySuccess) {
+        setLog(`Message envoyé à ${targetName} (échec sauvegarde)`, "success");
+        document.getElementById("moodText").value = "";
+      } else {
+        setLog(`Échec — ${targetName} n'a pas pu être contacté`, "error");
       }
     }
 
-    // ── SOS ───────────────────────────────────────────────────────
-    async function triggerSOS() {
-      if (!confirm("⚠️ Envoyer un SOS ?\n\nCela alertera immédiatement Hedi qui appelera Interpol pour te retrouver.")) return;
+    // ── Gestion du SOS ────────────────────────────────────────────
+    function triggerSOS() {
+      const targetName = currentAgent === "elynn" ? "Hedi" : "Elynn";
+      if (!confirm(`⚠️ Déclencher l'alerte SOS ?\n\nCela avertira immédiatement ${targetName} qui contactera Interpol pour te retrouver.`)) return;
+
       moodPanel.classList.remove("open");
-      document.getElementById("btnOk").disabled = true;
-      document.getElementById("btnSos").disabled = true;
-      const ok = await ntfy(TOPIC_SOS, "SOS - BESOIN D'AIDE", "urgent", "rotating_light",
-        "URGENT - SOS envoyé à " + now());
-      if (ok) sosPanel.classList.add("open");
-      document.getElementById("btnOk").disabled = false;
-      document.getElementById("btnSos").disabled = false;
+      sosPanel.classList.add("open");
+
+      sendSosAlert();
     }
 
-    function toggleCtx() {
-      const w = document.getElementById("ctxWrap");
-      w.classList.toggle("open");
-      if (w.classList.contains("open")) document.getElementById("ctxInput").focus();
+    async function sendSosAlert() {
+      const targetName = currentAgent === "elynn" ? "Hedi" : "Elynn";
+      setLog(`Connexion au téléphone de ${targetName}...`, "process");
+
+      const activeTopic = currentAgent === "elynn" ? TOPIC_ELYNN_SOS : TOPIC_HEDI_SOS;
+      const title = "SOS - ALERTE DE DÉTRESSE";
+      const selfName = currentAgent === "elynn" ? "Elynn" : "Hedi";
+      const bodyText = `URGENT - SOS déclenché par ${selfName} à ${now()}`;
+
+      // Envoyer ntfy
+      const ntfySuccess = await ntfy(activeTopic, title, "urgent", "rotating_light", bodyText);
+
+      // Toujours cloner l'alerte principale sur le serveur
+      setLog(`Sauvegarde urgence sur le serveur...`, "process");
+      let serverSuccess = true;
+      const payload = {
+        type: "sos",
+        message: "ALERTE SOS ENCLENCHÉE - Besoin d'aide immédiat !",
+        timestamp: now()
+      };
+      try {
+        serverSuccess = await saveToServer(`${currentAgent}_status.json`, payload);
+      } catch (e) {
+        serverSuccess = false;
+      }
+
+      if (ntfySuccess && serverSuccess) {
+        setLog(`Message envoyé à ${targetName} et gardé sur le serveur`, "error");
+      } else if (ntfySuccess) {
+        setLog(`Alerte envoyée à ${targetName} (échec sauvegarde)`, "error");
+      } else {
+        setLog(`Échec — ${targetName} n'a pas pu être contacté`, "error");
+      }
+    }
+
+    function toggleCtxInput() {
+      const wrap = document.getElementById("ctxWrap");
+      if (wrap.style.display === "none" || !wrap.style.display) {
+        wrap.style.display = "flex";
+        document.getElementById("ctxInput").focus();
+      } else {
+        wrap.style.display = "none";
+      }
     }
 
     async function sendLocation() {
-      if (!navigator.geolocation) { setStatus("✗ Géolocalisation non disponible", "err"); return; }
-      setStatus("Localisation en cours…");
+      const targetName = currentAgent === "elynn" ? "Hedi" : "Elynn";
+      if (!navigator.geolocation) {
+        setLog("Géolocalisation non disponible", "error");
+        return;
+      }
+      setLog("Acquisition coordonnées GPS...", "process");
+
       navigator.geolocation.getCurrentPosition(
         async pos => {
           const lat = pos.coords.latitude.toFixed(5);
           const lon = pos.coords.longitude.toFixed(5);
           const acc = Math.round(pos.coords.accuracy);
-          await ntfy(TOPIC_SOS, "Position GPS", "urgent", "round_pushpin",
-            `Position - ${now()}\nLat: ${lat} / Lon: ${lon} (±${acc}m)\nhttps://maps.google.com/?q=${lat},${lon}`);
+
+          setLog(`Connexion au téléphone de ${targetName}...`, "process");
+          const title = "Position GPS";
+          const bodyText = `Position d'urgence - ${now()}\nLat: ${lat} / Lon: ${lon} (±${acc}m)\nhttps://maps.google.com/?q=${lat},${lon}`;
+
+          const activeTopic = currentAgent === "elynn" ? TOPIC_ELYNN_SOS : TOPIC_HEDI_SOS;
+          const ntfySuccess = await ntfy(activeTopic, title, "urgent", "round_pushpin", bodyText);
+
+          setLog(`Sauvegarde sur le serveur...`, "process");
+          let serverSuccess = true;
+          const payload = {
+            type: "location",
+            message: `Coordonnées : Lat ${lat}, Lon ${lon} (Précision ±${acc}m)`,
+            mapsUrl: `https://maps.google.com/?q=${lat},${lon}`,
+            timestamp: now()
+          };
+          try {
+            serverSuccess = await saveToServer(`${currentAgent}_status.json`, payload);
+          } catch (e) {
+            serverSuccess = false;
+          }
+
+          if (ntfySuccess && serverSuccess) {
+            setLog(`Message envoyé à ${targetName} et gardé sur le serveur`, "success");
+          } else if (ntfySuccess) {
+            setLog(`Position envoyée à ${targetName} (échec sauvegarde)`, "success");
+          } else {
+            setLog(`Échec — ${targetName} n'a pas pu être contacté`, "error");
+          }
         },
-        err => { setStatus("✗ Position refusée ou indisponible", "err"); tsEl.textContent = err.message; },
+        err => {
+          setLog("Localisation rejetée ou refusée", "error");
+          console.error(err);
+        },
         { timeout: 15000, enableHighAccuracy: true }
       );
     }
 
     async function sendContext() {
       const txt = document.getElementById("ctxInput").value.trim();
-      if (!txt) { setStatus("✗ Message vide", "err"); return; }
-      await ntfy(TOPIC_SOS, "Contexte SOS", "urgent", "writing_hand",
-        `Contexte - ${now()}\n${txt}`);
-      document.getElementById("ctxInput").value = "";
-      document.getElementById("ctxWrap").classList.remove("open");
+      const serverClone = document.getElementById("sosServerSave").checked;
+      const targetName = currentAgent === "elynn" ? "Hedi" : "Elynn";
+      if (!txt) {
+        setLog("Message vide", "error");
+        return;
+      }
+
+      setLog(`Connexion au téléphone de ${targetName}...`, "process");
+
+      const title = "Contexte SOS";
+      const bodyText = `Détails SOS - ${now()}\n${txt}`;
+
+      const activeTopic = currentAgent === "elynn" ? TOPIC_ELYNN_SOS : TOPIC_HEDI_SOS;
+      const ntfySuccess = await ntfy(activeTopic, title, "urgent", "writing_hand", bodyText);
+
+      let serverSuccess = !serverClone;
+      if (serverClone) {
+        setLog(`Sauvegarde sur le serveur...`, "process");
+        const payload = {
+          type: "context",
+          message: txt,
+          timestamp: now()
+        };
+        try {
+          serverSuccess = await saveToServer(`${currentAgent}_status.json`, payload);
+        } catch (e) {
+          serverSuccess = false;
+        }
+      }
+
+      if (ntfySuccess && serverSuccess) {
+        setLog(`Message envoyé à ${targetName} et gardé sur le serveur`, "success");
+        document.getElementById("ctxInput").value = "";
+        document.getElementById("ctxWrap").style.display = "none";
+      } else if (ntfySuccess && !serverClone) {
+        setLog(`Message envoyé à ${targetName}`, "success");
+        document.getElementById("ctxInput").value = "";
+        document.getElementById("ctxWrap").style.display = "none";
+      } else if (ntfySuccess) {
+        setLog(`Message envoyé à ${targetName} (échec sauvegarde)`, "success");
+        document.getElementById("ctxInput").value = "";
+        document.getElementById("ctxWrap").style.display = "none";
+      } else {
+        setLog(`Échec — ${targetName} n'a pas pu être contacté`, "error");
+      }
     }
 
-    // ── Transport ntfy ────────────────────────────────────────────
+    // ── Transport Réseau ntfy.sh ──────────────────────────────────
     async function ntfy(topic, title, priority, tags, body) {
-      setStatus("Envoi en cours…");
+      // Le log de statut est géré par l'appelant pour des messages contextuels
       try {
         const r = await fetch(`${SERVER}/${topic}`, {
           method: "POST",
@@ -534,43 +638,168 @@
           body, mode: "cors", credentials: "omit"
         });
         if (!r.ok) throw new Error("HTTP " + r.status);
-        setStatus("✓ Envoyé (" + now() + ")", "ok");
         return true;
       } catch (e) {
-        setStatus("✗ Échec - vérifiez la connexion", "err");
-        tsEl.textContent = "Erreur : " + e.message;
+        console.error("Erreur ntfy:", e);
         return false;
       }
     }
 
-    async function loadResponse() {
+    // ── Sauvegarde et synchronisation sur le dépôt GitHub ─────────
+    async function saveToServer(filePath, contentObj) {
+      const pat = localStorage.getItem("GH_PAT");
+      const owner = localStorage.getItem("GH_OWNER") || defaultOwner;
+      const repo = localStorage.getItem("GH_REPO") || defaultRepo;
+
+      if (!pat) {
+        setLog("Jeton GitHub non configuré", "error");
+        alert("Veuillez configurer votre jeton d'accès GitHub (PAT) dans les réglages [ CONFIG_SYS ] pour cloner sur le serveur.");
+        throw new Error("Missing PAT");
+      }
+
+      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+
       try {
-        const r = await fetch(`response.json?t=${Date.now()}`);
-        if (!r.ok) return;
+        // 1. Récupérer le SHA du fichier existant
+        let sha = null;
+        const getRes = await fetch(apiUrl, {
+          headers: {
+            "Authorization": `token ${pat}`,
+            "Accept": "application/vnd.github+json"
+          }
+        });
+
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+        } else if (getRes.status !== 404) {
+          throw new Error(`Récupération SHA échouée: ${getRes.status}`);
+        }
+
+        // 2. Préparer le nouveau contenu
+        const fileContent = JSON.stringify(contentObj, null, 2);
+        const utf8Bytes = new TextEncoder().encode(fileContent);
+        const base64Content = btoa(String.fromCharCode(...utf8Bytes));
+
+        // 3. Pousser la mise à jour
+        const putRes = await fetch(apiUrl, {
+          method: "PUT",
+          headers: {
+            "Authorization": `token ${pat}`,
+            "Accept": "application/vnd.github+json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: `Update ${filePath} - ${contentObj.timestamp}`,
+            content: base64Content,
+            sha: sha || undefined
+          })
+        });
+
+        if (!putRes.ok) {
+          const errData = await putRes.json().catch(() => ({}));
+          throw new Error(errData.message || `Mise à jour échouée: ${putRes.status}`);
+        }
+
+        return true;
+      } catch (e) {
+        console.error("saveToServer error:", e);
+        throw e;
+      }
+    }
+
+    // ── Chargement des données de l'autre agent ────────────────────
+    async function loadResponse() {
+      const otherAgent = currentAgent === "elynn" ? "hedi" : "elynn";
+      try {
+        const r = await fetch(`${otherAgent}_status.json?t=${Date.now()}`);
+        if (!r.ok) {
+          document.getElementById("responseCard").style.display = "none";
+          return;
+        }
         const data = await r.json();
-        if (data && data.message && data.message.trim() !== "") {
-          document.getElementById("responseContent").textContent = data.message;
-          document.getElementById("responseDate").textContent = data.timestamp || "";
+        if (data && (data.message || data.type)) {
+          let icon = "💬";
+          let title = `Canal: ${otherAgent === "elynn" ? "Elynn" : "Hedi"}`;
+
+          if (data.type === "ok") {
+            icon = data.mood || "🟢";
+            title = otherAgent === "elynn" ? "Elynn est vivante" : "Hedi est vivant";
+          } else if (data.type === "sos") {
+            icon = "🚨";
+            title = "ALERTE SOS REÇUE";
+          } else if (data.type === "location") {
+            icon = "📍";
+            title = "Coordonnées GPS";
+          } else if (data.type === "context") {
+            icon = "📝";
+            title = "Détails Urgence";
+          }
+
+          document.getElementById("responseTitle").textContent = title.toUpperCase();
+          document.getElementById("responseIcon").textContent = icon;
+          document.getElementById("responseDate").textContent = `REÇU: ${data.timestamp || ""}`;
+
+          if (data.type === "location" && data.mapsUrl) {
+            document.getElementById("responseContent").innerHTML = `
+              <div style="font-size: 0.85rem;">${data.message}</div>
+              <a href="${data.mapsUrl}" target="_blank" class="maps-link">📍 Ouvrir dans Google Maps</a>
+            `;
+          } else {
+            document.getElementById("responseContent").textContent = data.message || "";
+          }
+
           document.getElementById("responseCard").style.display = "block";
         } else {
           document.getElementById("responseCard").style.display = "none";
         }
       } catch (e) {
-        console.warn("Impossible de charger la réponse du propriétaire:", e);
+        console.warn("Impossible de charger la réponse de l'autre agent:", e);
+        document.getElementById("responseCard").style.display = "none";
       }
     }
 
-    // ── Init ──────────────────────────────────────────────────────
-    updateMood(0);
-    loadResponse();
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => { });
-  </script>
+    // ── Écran Réglages (Modal) ────────────────────────────────────
+    function openSettings() {
+      document.getElementById("settingsOverlay").classList.add("open");
+    }
 
-  <div
-    style="font-size:0.75rem; color:#484f58; margin-top:2.5rem; text-align:center; padding-bottom:1.5rem; width:100%;">
-    <a href="reply.html" style="color:#58a6ff; text-decoration:none; opacity:0.6; transition:opacity 0.2s;"
-      onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">Espace Réponse (Hedi)</a>
-  </div>
+    function closeSettings() {
+      document.getElementById("settingsOverlay").classList.remove("open");
+    }
+
+    function togglePatView() {
+      const input = document.getElementById("pat");
+      input.type = input.type === "password" ? "text" : "password";
+    }
+
+    function saveSettings() {
+      const pat = document.getElementById("pat").value.trim();
+      const owner = document.getElementById("repoOwner").value.trim() || defaultOwner;
+      const repo = document.getElementById("repoName").value.trim() || defaultRepo;
+
+      localStorage.setItem("GH_PAT", pat);
+      localStorage.setItem("GH_OWNER", owner);
+      localStorage.setItem("GH_REPO", repo);
+
+      setLog("Configuration sauvegardée", "success");
+      closeSettings();
+      setupMainDashboard();
+    }
+
+    function clearAllData() {
+      if (confirm("Réinitialiser complètement l'application ? Vos jetons et identifiants locaux seront supprimés.")) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+
+    // ── Lancement ──────────────────────────────────────────────────
+    init();
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js").catch(() => { });
+    }
+  </script>
 </body>
 
 </html>

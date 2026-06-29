@@ -1,6 +1,6 @@
 // Service Worker — cache la page pour un chargement hors-ligne
-const CACHE = "ehms-v1";
-const FILES = ["./", "index.html", "manifest.json"];
+const CACHE = "bijection-communicator-v1";
+const FILES = ["./", "index.html", "index.css", "manifest.json"];
 
 self.addEventListener("install", e => {
   e.waitUntil(
